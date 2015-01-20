@@ -7,31 +7,46 @@ makeCacheMatrix <- function(x = matrix()) {
 
   z <- NULL
   set <- function(y) {
-    x <<- y
+z <-    x <<- y
     z <<- NULL
   }
   get <- function() x
   setinv <- function(solve) z <<- solve
   getinv <- function() z
-  list(get = get, setinv = setinv, getinv = getinv)
+  list(set=set, get = get, setinv = setinv, getinv = getinv)
 }
 
-cacheSolve <- function(x, ...) {
+cacheSolve <- function(x, y = NULL, ...) {
 
 	## This function computes the inverse of the special "matrix" created 
-	## by makeCacheMatrix. If the inverse has already been calculated, 
-	## then the inverse is retrieved from the cache.
+	## by makeCacheMatrix. 
 	
-	## Note: if the source matrix has changed then makeCacheMatrix
-	## must be called first.
-	
+	## x is a "special" matrix object created by makeCacheMatrix
+  
+  ## y is an optional "regular" matrix. If provided, it will be compared
+  ## with the source matrix for x and if they are different the cache
+  ## matrix will be updated with y. If y is not provided, it will be assumed
+  ## that the source matrix for x has not changed.
+  
+  ## If the matrix has not changed or inverse has already been calculated, 
+  ## then the inverse is retrieved from the cache.
+  
+  ## update the cached matrix if necessary
+  if(!is.null(y) && !identical(x$get(), y)) {
+    message("updating the cached matrix")
+    x$set(y)
+  }
+
+  ## use the cached inverse if it exists
   z <- x$getinv()
   if(!is.null(z)) {
-    message("getting cached data")
+    message("getting cached inverse")
     return(z)
   }
+  
+  ## calculate, cache and return the inverse
   data <- x$get()
-  z <- solve(data)
+  z <- solve(data, ...)
   x$setinv(z)
   z
 }
