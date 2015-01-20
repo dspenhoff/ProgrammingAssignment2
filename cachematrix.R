@@ -7,7 +7,7 @@ makeCacheMatrix <- function(x = matrix()) {
 
   z <- NULL
   set <- function(y) {
-z <-    x <<- y
+		x <<- y
     z <<- NULL
   }
   get <- function() x
@@ -29,7 +29,8 @@ cacheSolve <- function(x, y = NULL, ...) {
   ## that the source matrix for x has not changed.
   
   ## If the matrix has not changed or inverse has already been calculated, 
-  ## then the inverse is retrieved from the cache.
+  ## then the inverse is retrieved from the cache. Otherwise, the inverse
+	## is calculated, cached and returned.
   
   ## update the cached matrix if necessary
   if(!is.null(y) && !identical(x$get(), y)) {
